@@ -1,5 +1,5 @@
-keyword = "熊猫"
-download_folder = "/home/zyt/桌面/新建文件夹/picc"
-num_images = 100
-input_type = "text"  # 可以是 "text" 或 "image"
-image_file = "/home/zyt/桌面/bq.jpg"  # 当 input_type 是 image 时使用的图片路径
+keyword = "panda"
+download_folder = "/home/zyt/桌面/新建文件夹/t1"
+num_images = 10
+input_type = "text"
+image_file = "/home/zyt/桌面/bq.jpg"

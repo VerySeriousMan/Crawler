@@ -4,190 +4,96 @@
 Project Name: Crawler
 File Created: 2024.05.23
 Author: ZhangYuetao
+GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: main.py
-last renew 2024.05.24
+last renew 2024.05.27
 """
 
-import re
-import requests
-import os
-import time
-import random
-import json
-import toml
-from bs4 import BeautifulSoup
-from io import BytesIO
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import qt_material
+import logging
+from logger import logger
+
+from Crawler import *
+from utils import pic_utils as pu
 
 
-# 从文件中读取 User-Agent 列表
-def get_user_agents():
-    with open("lake/user_agents.txt", "r") as file:
-        user_agents = [line.strip() for line in file if line.strip()]
-    return user_agents
+class MyClass(QMainWindow, Ui_MainWindow):
+    def __init__(self, parent=None):
+        super(MyClass, self).__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle("图片爬虫软件V1.0")
+
+        self.pic_utils_instance = pu()
+
+        self.submit_buttom.clicked.connect(self.submit)
+
+        # 连接日志信息输出到 text_edit 控件
+        log_handler = QTextEditLogger(self.log_edit)
+        logging.getLogger().addHandler(log_handler)
+        logging.getLogger().setLevel(logging.INFO)  # 设置日志级别
+
+    def refresh_setting(self):
+        keyword = self.keyword_edit.text()
+        num = self.num_edit.text()
+        save_address = self.save_address_edit.text()
+        self.pic_utils_instance.refresh_settings(
+            keyword=keyword,
+            download_folder=save_address,
+            num_images=num,
+            input_type=None,  # 如果有 input_type，替换 None
+            image_file=None  # 如果有 image_file，替换 None
+        )
+
+    def submit(self):
+        self.refresh_setting()
+        settings = self.pic_utils_instance.get_settings()
+        keyword = settings.get('keyword', 'default_keyword')
+        download_folder = settings.get('download_folder', 'downloads')
+        num_images = int(settings.get('num_images', 10))
+        input_type = settings.get('input_type', 'text')
+        image_file = settings.get('image_file', '')
+
+        if input_type == 'text':
+            img_urls = self.pic_utils_instance.baidu_image_search(keyword)
+        else:
+            img_urls = []
+
+        if img_urls:
+            self.pic_utils_instance.download_images(img_urls[:num_images], keyword, download_folder)
 
 
-def get_random_user_agent():
-    user_agents = get_user_agents()
-    return random.choice(user_agents)
+# QTextEditLogger 类用于将日志信息输出到 QTextEdit 控件
+class QTextEditLogger(logging.Handler):
+    def __init__(self, text_edit):
+        super().__init__()
+        self.text_edit = text_edit
+        self.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
+    def emit(self, record):
+        msg = self.format(record)
+        color = self.get_color(record.levelname)
+        html_msg = f'<span style="color:{color}">{msg}</span>'
+        self.text_edit.append(html_msg)
+        # 强制刷新QTextEdit
+        self.text_edit.ensureCursorVisible()
+        self.text_edit.repaint()
 
-# 从文件中读取代理列表
-def get_proxies():
-    with open("lake/proxies.txt", "r") as file:
-        proxies = [line.strip() for line in file if line.strip()]
-    return proxies
-
-
-def get_random_proxy():
-    proxies = get_proxies()
-    return random.choice(proxies)
-
-
-# 从文件中读取查询参数
-def get_params():
-    with open("setting/param.json", "r") as file:
-        params = json.load(file)
-    return params
-
-
-# 从 settings.toml 文件中读取设置
-def get_settings():
-    with open("setting/settings.toml", "r") as file:
-        settings = toml.load(file)
-    return settings
-
-
-# 在百度图片中搜索图片
-def baidu_image_search(keyword):
-    search_url = "https://image.baidu.com/search/index?tn=baiduimage&word="
-    headers = {
-        "User-Agent": get_random_user_agent(),
-    }
-    params = get_params()
-    params['queryWord'] = keyword
-    params['word'] = keyword
-
-    all_urls = []
-
-    for pn in range(10):
-        params['pn'] = str(int(pn + 1) * 30)
-        proxy = {'http': get_random_proxy()}
-        try:
-            print(f"Trying proxy: {proxy}")
-            response = requests.get(search_url, headers=headers, params=params, proxies=proxy, timeout=10)
-            print("Response status code:", response.status_code)
-            response.encoding = 'utf-8'
-            html = response.text
-            img_urls = re.findall('"thumbURL":"(.*?)",', html, re.S)
-            print("Found image URLs:", img_urls)
-            all_urls.extend(img_urls)
-        except Exception as e:
-            print(f"Image search failed with proxy {proxy}: {e}")
-            continue
-
-    return all_urls
-
-
-def baidu_image_search_by_image(image_path):
-    upload_url = "https://graph.baidu.com/upload"
-
-    headers = {
-        "User-Agent": get_random_user_agent(),
-    }
-
-    # 上传图片获取图片 URL
-    files = {'image': open(image_path, 'rb')}
-    proxy = {'http': get_random_proxy()}
-
-    try:
-        print(f"Trying proxy: {proxy} for image upload")
-        response = requests.post(upload_url, headers=headers, files=files, proxies=proxy, timeout=10)
-        print("Response status code for upload:", response.status_code)
-        response_data = response.json()
-        print("Response data for upload:", response_data)
-        if response_data.get('status') != 0:
-            print("Image upload failed with error:", response_data.get('msg'))
-            return []
-        img_search_url = response_data['data']['url']
-        print("Uploaded image search URL:", img_search_url)
-    except Exception as e:
-        print(f"Image upload failed with proxy {proxy}: {e}")
-        return []
-
-    all_urls = []
-
-    try:
-        print(f"Trying proxy: {proxy} for image search")
-        # 使用代理获取网页内容
-        response = requests.get(img_search_url, headers=headers, proxies=proxy, timeout=10)
-        print("Response status code:", response.status_code)
-        response.encoding = 'utf-8'
-        html = response.text
-
-        # 使用 BeautifulSoup 解析 HTML 页面
-        soup = BeautifulSoup(html, "html.parser")
-
-        # 查找所有图片标签
-        img_tags = soup.find_all("img")
-
-        # 提取图片链接
-        img_urls = [img.get("src") for img in img_tags]
-
-        # 过滤掉空链接和非 HTTP/HTTPS 链接
-        img_urls = [url for url in img_urls if url and url.startswith(('http://', 'https://'))]
-
-        print("Found image URLs:", img_urls)
-        all_urls.extend(img_urls)
-    except Exception as e:
-        print(f"Image search failed with proxy {proxy}: {e}")
-
-    return all_urls
-
-
-# 下载图片
-def download_images(img_urls, keyword, download_path):
-    if not os.path.exists(download_path):
-        os.makedirs(download_path)
-
-    for idx, img_url in enumerate(img_urls):
-        headers = {
-            "User-Agent": get_random_user_agent(),
+    def get_color(self, levelname):
+        colors = {
+            'DEBUG': 'cyan',
+            'INFO': 'green',
+            'WARNING': 'orange',
+            'ERROR': 'red',
+            'CRITICAL': 'darkred',
         }
-        proxies = get_proxies()
-        for proxy in proxies:
-            try:
-                print(f"Trying proxy: {proxy}")
-                img_data = requests.get(img_url, headers=headers, proxies={"http": proxy}, timeout=10).content
-                print("Downloaded image data size:", len(img_data))
-                with open(os.path.join(download_path, f"{keyword}_{idx + 1}.jpg"), 'wb') as img_file:
-                    img_file.write(img_data)
-                print(f"Downloaded {keyword}_{idx + 1}.jpg")
-                break
-            except Exception as e:
-                print(f"Failed to download {img_url} with proxy {proxy}: {e}")
-                continue
-
-        time.sleep(random.uniform(1, 3))  # 随机延时，避免请求过于频繁
+        return colors.get(levelname, 'black')
 
 
 if __name__ == "__main__":
-    settings = get_settings()
-    keyword = settings['keyword']
-    download_folder = settings['download_folder']
-    num_images = settings['num_images']
-    input_type = settings['input_type']
-    image_file = settings['image_file']
-
-    if input_type == 'text':
-        img_urls = baidu_image_search(keyword)
-    elif input_type == 'image' and os.path.isfile(image_file):
-        img_urls = baidu_image_search_by_image(image_file)
-        print('222')
-    else:
-        print(f"Invalid input type or image file not found.")
-        img_urls = []
-
-    if img_urls:
-        download_images(img_urls[:num_images], keyword, download_folder)
-    else:
-        print(f"No image URLs found for {keyword}.")
+    app = QApplication(sys.argv)
+    myWin = MyClass()
+    qt_material.apply_stylesheet(app, theme='default')
+    myWin.show()
+    sys.exit(app.exec_())

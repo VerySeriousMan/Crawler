@@ -1,0 +1,4 @@
+2024-05-27 15:26:58,578 - INFO - This is an info message
+2024-05-27 15:26:58,578 - WARNING - This is a warning message
+2024-05-27 15:26:58,578 - ERROR - This is an error message
+2024-05-27 15:26:58,578 - CRITICAL - This is a critical message
