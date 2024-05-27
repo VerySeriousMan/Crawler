@@ -1,4 +1,0 @@
-2024-05-27 15:26:30,184 - INFO - This is an info message
-2024-05-27 15:26:30,184 - WARNING - This is a warning message
-2024-05-27 15:26:30,184 - ERROR - This is an error message
-2024-05-27 15:26:30,184 - CRITICAL - This is a critical message
