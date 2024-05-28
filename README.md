@@ -4,7 +4,7 @@ Crawl Baidu pictures
 
 ## 作者
 
-- **姓名**: Zhang Yuetao
+- **Author**: Zhang Yuetao
 - **GitHub**: [VerySeriousMan](https://github.com/VerySeriousMan)
 
 

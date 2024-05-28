@@ -13,7 +13,12 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import qt_material
 import logging
-from logger import logger
+
+import toml
+import colorlog
+import requests
+import chardet
+from bs4 import BeautifulSoup
 
 from Crawler import *
 from utils import pic_utils as pu
@@ -24,6 +29,7 @@ class MyClass(QMainWindow, Ui_MainWindow):
         super(MyClass, self).__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("图片爬虫软件V1.0")
+        self.setWindowIcon(QtGui.QIcon("sunny.ico"))
 
         self.pic_utils_instance = pu()
 

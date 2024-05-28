@@ -16,6 +16,7 @@ import time
 import random
 import json
 import toml
+import chardet
 from bs4 import BeautifulSoup
 from logger import logger
 
@@ -70,14 +71,24 @@ class pic_utils:
     # 从 settings.toml 文件中读取设置
     def get_settings(self):
         try:
-            with open(self.settings_path, "r") as file:
-                settings = toml.load(file)
+            # 自动检测文件编码
+            with open(self.settings_path, 'rb') as f:
+                raw_data = f.read()
+                result = chardet.detect(raw_data)
+                encoding = result['encoding']
+
+            # 使用检测到的编码读取文件
+            with open(self.settings_path, 'r', encoding=encoding) as f:
+                settings = toml.load(f)
             return settings
         except FileNotFoundError:
             logger.error("Settings file not found.")
             return {}
         except toml.TomlDecodeError:
             logger.error("Error decoding settings file.")
+            return {}
+        except UnicodeDecodeError as e:
+            logger.error(f"Unicode decode error: {e}")
             return {}
 
     def refresh_settings(self, keyword, download_folder, num_images, input_type, image_file):

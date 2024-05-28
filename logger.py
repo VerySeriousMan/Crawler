@@ -19,7 +19,7 @@ if not os.path.exists(log_folder):
     os.makedirs(log_folder)
 
 # 生成日志文件名
-log_filename = os.path.join(log_folder, datetime.now().strftime("%Y-%m-%d-%H:%M:%S") + "_log.txt")
+log_filename = os.path.join(log_folder, datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + "_log.txt")
 
 # 配置日志记录
 log_format = "%(asctime)s - %(levelname)s - %(message)s"

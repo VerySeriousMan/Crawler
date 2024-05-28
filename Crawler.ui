@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>246</height>
+    <width>750</width>
+    <height>252</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,14 +23,14 @@
    <widget class="QLabel" name="keyword_lable">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>60</x>
       <y>20</y>
-      <width>61</width>
-      <height>21</height>
+      <width>50</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
-     <string>keyword</string>
+     <string>关键词</string>
     </property>
    </widget>
    <widget class="QLabel" name="num_lable">
@@ -38,55 +38,25 @@
      <rect>
       <x>70</x>
       <y>60</y>
-      <width>41</width>
-      <height>21</height>
+      <width>40</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
-     <string>num</string>
+     <string>数量</string>
     </property>
    </widget>
    <widget class="QLabel" name="save_address_lable">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>50</x>
       <y>100</y>
-      <width>81</width>
-      <height>21</height>
+      <width>65</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
-     <string>save_address</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="keyword_edit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>20</y>
-      <width>113</width>
-      <height>26</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="num_edit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>60</y>
-      <width>113</width>
-      <height>26</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="save_address_edit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>100</y>
-      <width>113</width>
-      <height>26</height>
-     </rect>
+     <string>保存地址</string>
     </property>
    </widget>
    <widget class="QPushButton" name="submit_buttom">
@@ -94,8 +64,8 @@
      <rect>
       <x>120</x>
       <y>140</y>
-      <width>80</width>
-      <height>26</height>
+      <width>100</width>
+      <height>30</height>
      </rect>
     </property>
     <property name="text">
@@ -105,11 +75,50 @@
    <widget class="QTextEdit" name="log_edit">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>20</y>
-      <width>461</width>
-      <height>151</height>
+      <x>230</x>
+      <y>10</y>
+      <width>501</width>
+      <height>171</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="keyword_edit">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>20</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="num_edit">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>60</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="save_address_edit">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>100</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>
@@ -118,7 +127,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>742</width>
+     <width>750</width>
      <height>23</height>
     </rect>
    </property>
