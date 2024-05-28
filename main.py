@@ -6,22 +6,25 @@ File Created: 2024.05.23
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: main.py
-last renew 2024.05.27
+last renew 2024.05.28
 """
-
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import qt_material
-import logging
 
 import toml
 import colorlog
 import requests
 import chardet
 from bs4 import BeautifulSoup
+# 以上包用于直接对main.py情况下软件打包缺包的补充，复制其他子函数的包
 
-from Crawler import *
-from utils import pic_utils as pu
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import qt_material
+import logging
+from PyQt5 import QtGui
+
+from Crawler import Ui_MainWindow
+from utils import pic_utils
+from job_process import JobProcessor
 
 
 class MyClass(QMainWindow, Ui_MainWindow):
@@ -31,7 +34,8 @@ class MyClass(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("图片爬虫软件V1.0")
         self.setWindowIcon(QtGui.QIcon("sunny.ico"))
 
-        self.pic_utils_instance = pu()
+        self.pic_utils_instance = pic_utils()
+        self.job_processor = JobProcessor(self.pic_utils_instance)
 
         self.submit_buttom.clicked.connect(self.submit)
 
@@ -62,12 +66,12 @@ class MyClass(QMainWindow, Ui_MainWindow):
         image_file = settings.get('image_file', '')
 
         if input_type == 'text':
-            img_urls = self.pic_utils_instance.baidu_image_search(keyword)
+            img_urls = self.job_processor.baidu_image_search(keyword)
         else:
-            img_urls = []
+            img_urls = self.job_processor.baidu_image_search_by_image(image_file)
 
         if img_urls:
-            self.pic_utils_instance.download_images(img_urls[:num_images], keyword, download_folder)
+            self.job_processor.download_images(img_urls[:num_images], keyword, download_folder)
 
 
 # QTextEditLogger 类用于将日志信息输出到 QTextEdit 控件

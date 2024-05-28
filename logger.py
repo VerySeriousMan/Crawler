@@ -6,7 +6,7 @@ File Created: 2024.05.27
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: logger.py
-last renew 2024.05.27
+last renew 2024.05.28
 """
 
 import logging

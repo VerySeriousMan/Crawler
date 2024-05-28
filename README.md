@@ -37,6 +37,9 @@ Crawler 是一个用于抓取百度图片的工具。该工具提供了一个简
 - qt_material
 - requests
 - colorlog
+- chardet
+- beautifulsoup4
+- toml
 
 
 ## 安装
