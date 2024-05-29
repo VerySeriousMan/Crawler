@@ -6,7 +6,7 @@ File Created: 2024.05.28
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: job_process.py
-last renew 2024.05.28
+last renew 2024.05.29
 """
 
 import os
@@ -22,13 +22,17 @@ from logger import logger
 class JobProcessor:
     def __init__(self, pic_utils_instance):
         self.pic_utils_instance = pic_utils_instance
+        self.terminate = False  # 初始状态为未终止
+
+    def terminate_download(self):
+        self.terminate = True
 
     def baidu_image_search(self, keyword):
         search_url = "https://image.baidu.com/search/index?tn=baiduimage&word="
         headers = {
             "User-Agent": self.pic_utils_instance.get_random_user_agent(),
         }
-        params = self.pic_utils_instance.get_params()
+        params = self.pic_utils_instance.get_params('baidu_text_search_param.json')
         params['queryWord'] = keyword
         params['word'] = keyword
 
@@ -84,18 +88,27 @@ class JobProcessor:
 
         all_urls = []
         try:
-            logger.info(f"Trying proxy: {proxy} for image search")
-            response = requests.get(img_search_url, headers=headers, proxies=proxy, timeout=10)
-            logger.info(f"Response status code: {response.status_code}")
-            response.encoding = 'utf-8'
-            html = response.text
+            for pn in range(10):  # Increase range if necessary to get more images
+                params = {'pn': str(pn * 30)}
+                proxy = {'http': self.pic_utils_instance.get_random_proxy()}
 
-            soup = BeautifulSoup(html, "html.parser")
-            img_tags = soup.find_all("img")
-            img_urls = [img.get("src") for img in img_tags if img.get("src")]
+                logger.info(f"Trying proxy: {proxy} for image search page {pn}")
+                response = requests.get(img_search_url, headers=headers, params=params, proxies=proxy, timeout=10)
+                logger.info(f"Response status code: {response.status_code}")
+                response.encoding = 'utf-8'
+                html = response.text
 
-            logger.info(f"Found image URLs: {img_urls}")
-            all_urls.extend(img_urls)
+                soup = BeautifulSoup(html, "html.parser")
+                img_tags = soup.find_all("img")
+                img_urls = [img.get("src") for img in img_tags if img.get("src") and "http" in img.get("src")]
+
+                logger.info(f"Found image URLs on page {pn}: {img_urls}")
+                all_urls.extend(img_urls)
+
+                # Remove duplicates
+                all_urls = list(set(all_urls))
+
+                QApplication.processEvents()
         except Exception as e:
             logger.error(f"Image search failed with proxy {proxy}: {e}")
 
@@ -106,6 +119,10 @@ class JobProcessor:
             os.makedirs(download_path)
 
         for idx, img_url in enumerate(img_urls):
+            if self.terminate:  # 如果处于终止状态，则退出下载任务
+                logger.info("Download terminated.")
+                break
+
             headers = {
                 "User-Agent": self.pic_utils_instance.get_random_user_agent(),
             }
@@ -128,4 +145,5 @@ class JobProcessor:
 
             time.sleep(random.uniform(1, 3))  # 随机延时，避免请求过于频繁
 
-        logger.info(f"Downloaded image finished")
+        if not self.terminate:  # 如果未被终止，则打印下载完成信息
+            logger.info(f"Downloaded image finished")

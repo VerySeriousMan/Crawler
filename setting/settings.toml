@@ -1,5 +1,5 @@
-keyword = "cat"
-download_folder = "/home/zyt/桌面/新建文件夹/t1"
-num_images = 5
-input_type = "text"
-image_file = "/home/zyt/桌面/bq.jpg"
+keyword = "same_dog_2"
+download_folder = "dddgg"
+num_images = 30
+input_type = "image"
+image_file = "/home/zyt/桌面/code/Crawler/dg/dog_2.jpg"

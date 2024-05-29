@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
-    <height>252</height>
+    <width>751</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="keyword_lable">
+   <widget class="QLabel" name="keyword_label">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -33,7 +33,7 @@
      <string>关键词</string>
     </property>
    </widget>
-   <widget class="QLabel" name="num_lable">
+   <widget class="QLabel" name="num_label">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -46,7 +46,7 @@
      <string>数量</string>
     </property>
    </widget>
-   <widget class="QLabel" name="save_address_lable">
+   <widget class="QLabel" name="save_address_label">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -59,11 +59,11 @@
      <string>保存地址</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="submit_buttom">
+   <widget class="QPushButton" name="submit_button">
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>140</y>
+      <y>180</y>
       <width>100</width>
       <height>30</height>
      </rect>
@@ -78,7 +78,7 @@
       <x>230</x>
       <y>10</y>
       <width>501</width>
-      <height>171</height>
+      <height>201</height>
      </rect>
     </property>
    </widget>
@@ -121,13 +121,65 @@
      <string/>
     </property>
    </widget>
+   <widget class="QLabel" name="pic_load_label">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>140</y>
+      <width>65</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>以图搜图</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pic_load_button">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>140</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>上传图片</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="get_proxies_button">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>220</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>更新ip池</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="stop_button">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>220</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>停止</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>750</width>
+     <width>751</width>
      <height>23</height>
     </rect>
    </property>

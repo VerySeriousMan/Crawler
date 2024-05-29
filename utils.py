@@ -6,22 +6,25 @@ File Created: 2024.05.24
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: utils.py
-last renew 2024.05.28
+last renew 2024.05.29
 """
 
+import os
 import random
 import json
 import toml
 import chardet
 from logger import logger
+from get_proxy import get_free_proxies, save_proxies_to_file
 
 
 class pic_utils:
     def __init__(self):
         self.user_agents_path = 'lake/user_agents.txt'
         self.proxies_path = 'lake/proxies.txt'
-        self.param_path = 'setting/param.json'
+        self.param_dir = 'setting/param'
         self.settings_path = 'setting/settings.toml'
+        self.proxy_web = "https://www.zdaye.com/free"
 
     def get_user_agents(self):
         try:
@@ -49,9 +52,11 @@ class pic_utils:
         proxies = self.get_proxies()
         return random.choice(proxies) if proxies else None
 
-    def get_params(self):
+    def get_params(self, params_name):
+        print(params_name)
+        print(os.path.join(self.param_dir, params_name))
         try:
-            with open(self.param_path, "r", encoding='utf-8') as file:
+            with open(os.path.join(self.param_dir, params_name), "r", encoding='utf-8') as file:
                 params = json.load(file)
             return params
         except FileNotFoundError:
@@ -101,3 +106,10 @@ class pic_utils:
             logger.info("Settings updated successfully.")
         except Exception as e:
             logger.error(f"Failed to update settings: {e}")
+
+    def refresh_proxies(self):
+        all_proxies = get_free_proxies(self.proxy_web, 5)
+        if all_proxies is not None and all_proxies != []:
+            save_proxies_to_file(all_proxies, self.proxies_path)
+        else:
+            logger.warning("Failed to update proxies.")

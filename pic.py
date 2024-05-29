@@ -77,7 +77,7 @@ def get_random_proxy():
 # 从文件中读取查询参数
 def get_params():
     try:
-        with open("setting/param.json", "r") as file:
+        with open("setting/baidu_text_search_param.json", "r") as file:
             params = json.load(file)
         return params
     except FileNotFoundError:
