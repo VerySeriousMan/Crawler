@@ -6,7 +6,7 @@ File Created: 2024.05.23
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: main.py
-last renew 2024.06.04
+last renew 2024.06.05
 """
 
 import toml
@@ -40,6 +40,7 @@ class MyClass(QMainWindow, Ui_MainWindow):
         self.job_processor = JobProcessor(self.pic_utils_instance)
 
         self.pic_path = None
+        self.time_settings_path = 'setting/time_settings.toml'
 
         self.submit_button.clicked.connect(self.submit)
         # self.pic_load_button.clicked.connect(self.pic_load)
@@ -111,7 +112,14 @@ class MyClass(QMainWindow, Ui_MainWindow):
         #     logger.error(f"{input_type} type error!")
 
         if img_urls:
-            self.job_processor.download_images(img_urls[:num_images], keyword, download_folder)
+            time_settings = self.pic_utils_instance.get_settings(self.time_settings_path)
+            download_way = time_settings.get('download_way', 0)
+            if download_way == 0:
+                self.job_processor.download_images(img_urls[:num_images], keyword, download_folder)
+            if download_way == 1:
+                self.job_processor.threads_download_images(img_urls[:num_images], keyword, download_folder)
+            else:
+                logger.error(f"{download_way} type error!")
 
     def stop_download(self):
         self.job_processor.terminate_download()

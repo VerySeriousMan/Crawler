@@ -17,6 +17,8 @@ import requests
 import re
 from PyQt5.QtWidgets import QApplication
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
+
 from logger import logger
 from utils import pic_utils
 
@@ -277,6 +279,58 @@ class JobProcessor:
             min_download_time = time_settings.get('min_download_time', 0.2)
             max_download_time = time_settings.get('max_download_time', 0.6)
             time.sleep(random.uniform(min_download_time, max_download_time))  # 随机延时，避免请求过于频繁
+
+        if not self.terminate:  # 如果未被终止，则打印下载完成信息
+            logger.info(f"Downloaded image finished")
+
+    def download_image_thread(self, img_url, keyword, idx, download_path, proxy):
+        try:
+            headers = {
+                "User-Agent": self.pic_utils_instance.get_random_user_agent(),
+            }
+            logger.info(f"Trying proxy: {proxy}")
+            img_data = requests.get(img_url, headers=headers, proxies={"http": proxy}, timeout=10).content
+            logger.info(f"Downloaded image data size: {len(img_data)}")
+            if len(img_data) > 1024:
+                with open(os.path.join(download_path, f"{keyword}_{idx + 1}.jpg"), 'wb') as img_file:
+                    img_file.write(img_data)
+                logger.info(f"Downloaded {keyword}_{idx + 1}.jpg")
+            else:
+                logger.warning(f"{keyword}_{idx + 1}.jpg size does not match, do not download")
+
+            QApplication.processEvents()  # 防止界面冻结
+
+            time_settings = self.pic_utils_instance.get_settings(self.time_settings_path)
+            min_download_time = time_settings.get('min_download_time', 0.2)
+            max_download_time = time_settings.get('max_download_time', 0.6)
+            time.sleep(random.uniform(min_download_time, max_download_time))  # 随机延时，避免请求过于频繁
+
+        except Exception as e:
+            logger.error(f"Failed to download {img_url} with proxy {proxy}: {e}")
+
+    def threads_download_images(self, img_urls, keyword, download_path):
+        if not os.path.exists(download_path):
+            os.makedirs(download_path)
+
+        # 将图片URL列表划分成n个子列表
+        time_settings = self.pic_utils_instance.get_settings(self.time_settings_path)
+        num_threads = time_settings.get('threads_num', 10)
+        chunk_size = (len(img_urls) + num_threads - 1) // num_threads
+        chunks = [img_urls[i:i+chunk_size] for i in range(0, len(img_urls), chunk_size)]
+
+        with ThreadPoolExecutor(max_workers=num_threads) as executor:  # 使用10个线程
+            proxies = self.pic_utils_instance.get_proxies()  # 获取代理IP列表
+            for chunk_id, chunk in enumerate(chunks):
+                for idx, img_url in enumerate(chunk):
+                    if self.terminate:  # 如果处于终止状态，则退出下载任务
+                        logger.info("Download terminated.")
+                        break
+
+                    # 为每个图片选择一个代理IP
+                    proxy = random.choice(proxies)
+
+                    # 提交任务给线程池
+                    executor.submit(self.download_image_thread, img_url, keyword, chunk_id * chunk_size + idx, download_path, proxy)
 
         if not self.terminate:  # 如果未被终止，则打印下载完成信息
             logger.info(f"Downloaded image finished")
