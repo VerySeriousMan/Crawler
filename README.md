@@ -1,6 +1,6 @@
 # Crawler
 
-- **Version**: V1.1
+- **Version**: V1.2
 
 ## 作者
 

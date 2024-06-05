@@ -6,7 +6,7 @@ File Created: 2024.05.28
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: job_process.py
-last renew 2024.06.04
+last renew 2024.06.05
 """
 
 import os
@@ -160,7 +160,7 @@ class JobProcessor:
                 logger.info("Get url terminated.")
                 break
 
-            params['pn'] = str(int(pn + 1) * 30)
+            params['pn'] = pn * 30
             proxy = {'http': self.pic_utils_instance.get_random_proxy()}
             try:
                 logger.info(f"Trying proxy: {proxy}")
