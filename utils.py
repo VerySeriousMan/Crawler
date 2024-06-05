@@ -6,7 +6,7 @@ File Created: 2024.05.24
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: utils.py
-last renew 2024.05.29
+last renew 2024.06.04
 """
 
 import os
@@ -15,7 +15,7 @@ import json
 import toml
 import chardet
 from logger import logger
-from get_proxy import get_free_proxies, save_proxies_to_file
+from get_proxy import get_zdaye_proxies, save_proxies_to_file, get_docip_proxies
 
 
 class pic_utils:
@@ -24,7 +24,7 @@ class pic_utils:
         self.proxies_path = 'lake/proxies.txt'
         self.param_dir = 'setting/param'
         self.settings_path = 'setting/settings.toml'
-        self.proxy_web = "https://www.zdaye.com/free"
+        self.web_dir = 'setting/web_list.txt'
 
     def get_user_agents(self):
         try:
@@ -53,8 +53,6 @@ class pic_utils:
         return random.choice(proxies) if proxies else None
 
     def get_params(self, params_name):
-        print(params_name)
-        print(os.path.join(self.param_dir, params_name))
         try:
             with open(os.path.join(self.param_dir, params_name), "r", encoding='utf-8') as file:
                 params = json.load(file)
@@ -66,14 +64,14 @@ class pic_utils:
             logger.error("Error decoding params file.")
             return {}
 
-    def get_settings(self):
+    def get_settings(self, settings_path):
         try:
-            with open(self.settings_path, 'rb') as f:
+            with open(settings_path, 'rb') as f:
                 raw_data = f.read()
                 result = chardet.detect(raw_data)
                 encoding = result['encoding']
 
-            with open(self.settings_path, 'r', encoding=encoding) as f:
+            with open(settings_path, 'r', encoding=encoding) as f:
                 settings = toml.load(f)
             return settings
         except FileNotFoundError:
@@ -87,7 +85,7 @@ class pic_utils:
             return {}
 
     def refresh_settings(self, keyword, download_folder, num_images, input_type, image_file):
-        settings = self.get_settings()
+        settings = self.get_settings(self.settings_path)
 
         if keyword is not None and keyword != '':
             settings['keyword'] = keyword
@@ -108,7 +106,10 @@ class pic_utils:
             logger.error(f"Failed to update settings: {e}")
 
     def refresh_proxies(self):
-        all_proxies = get_free_proxies(self.proxy_web, 5)
+        proxies_zdaye = get_zdaye_proxies(5)
+        proxies_docip = get_docip_proxies()
+        all_proxies = [proxies_zdaye]
+        all_proxies.extend(proxies_docip)
         if all_proxies is not None and all_proxies != []:
             save_proxies_to_file(all_proxies, self.proxies_path)
         else:

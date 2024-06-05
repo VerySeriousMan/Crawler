@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>330</height>
+    <width>747</width>
+    <height>267</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -121,7 +121,30 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="pic_load_label">
+   <widget class="QPushButton" name="stop_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>停止</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="web_select_box">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>140</y>
+      <width>100</width>
+      <height>30</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="web_label">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -131,46 +154,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>以图搜图</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pic_load_button">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>140</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>上传图片</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="get_proxies_button">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>220</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>更新ip池</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="stop_button">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>220</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>停止</string>
+     <string>爬取网站</string>
     </property>
    </widget>
   </widget>
@@ -179,7 +163,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>751</width>
+     <width>747</width>
      <height>23</height>
     </rect>
    </property>

@@ -1,5 +1,5 @@
-keyword = "same_dog_2"
-download_folder = "dddgg"
-num_images = 30
-input_type = "image"
-image_file = "/home/zyt/桌面/code/Crawler/dg/dog_2.jpg"
+keyword = "dog"
+download_folder = "dd"
+num_images = 50
+input_type = "text"
+image_file = "/home/zyt/桌面/bq.jpg"

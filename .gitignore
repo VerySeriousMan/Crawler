@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 log/
+Crawler1.ui
 
 # C extensions
 *.so

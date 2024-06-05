@@ -6,7 +6,7 @@ File Created: 2024.05.23
 Author: ZhangYuetao
 GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: main.py
-last renew 2024.05.29
+last renew 2024.06.04
 """
 
 import toml
@@ -33,7 +33,7 @@ class MyClass(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super(MyClass, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle("图片爬虫软件V1.1")
+        self.setWindowTitle("图片爬虫软件V1.2")
         self.setWindowIcon(QtGui.QIcon("sunny.ico"))
 
         self.pic_utils_instance = pic_utils()
@@ -42,9 +42,13 @@ class MyClass(QMainWindow, Ui_MainWindow):
         self.pic_path = None
 
         self.submit_button.clicked.connect(self.submit)
-        self.pic_load_button.clicked.connect(self.pic_load)
-        self.get_proxies_button.clicked.connect(self.refresh_proxies)
+        # self.pic_load_button.clicked.connect(self.pic_load)
+        # self.get_proxies_button.clicked.connect(self.refresh_proxies)
         self.stop_button.clicked.connect(self.stop_download)
+
+        self.web = 'baidu'
+        self.web_select_box.addItems(['baidu', 'bing', 'sogou', '360'])
+        self.web_select_box.currentIndexChanged.connect(self.select_web)
 
         # 连接日志信息输出到 text_edit 控件
         log_handler = QTextEditLogger(self.log_edit)
@@ -69,21 +73,21 @@ class MyClass(QMainWindow, Ui_MainWindow):
             image_file=image_file
         )
 
-    def pic_load(self):
-        file_path = QFileDialog.getOpenFileName(self)[0]
-        if (file_path.endswith('jpg') or file_path.endswith('jpeg')
-                or file_path.endswith('png') or file_path.endswith('bmp')):
-            self.pic_path = file_path
-            logger.info(f"successfully loading pic: {file_path}.")
-        else:
-            logger.warning(f"{file_path} is not a valid image.")
+    # def pic_load(self):
+    #     file_path = QFileDialog.getOpenFileName(self)[0]
+    #     if (file_path.endswith('jpg') or file_path.endswith('jpeg')
+    #             or file_path.endswith('png') or file_path.endswith('bmp')):
+    #         self.pic_path = file_path
+    #         logger.info(f"successfully loading pic: {file_path}.")
+    #     else:
+    #         logger.warning(f"{file_path} is not a valid image.")
 
-    def refresh_proxies(self):
-        self.pic_utils_instance.refresh_proxies()
+    # def refresh_proxies(self):
+    #     self.pic_utils_instance.refresh_proxies()
 
     def submit(self):
         self.refresh_setting()
-        settings = self.pic_utils_instance.get_settings()
+        settings = self.pic_utils_instance.get_settings(self.pic_utils_instance.settings_path)
         keyword = settings.get('keyword', 'default_keyword')
         download_folder = settings.get('download_folder', 'downloads')
         num_images = int(settings.get('num_images', 10))
@@ -92,18 +96,29 @@ class MyClass(QMainWindow, Ui_MainWindow):
         img_urls = None
         self.job_processor.terminate = False  # 打开
 
-        if input_type == 'text':
-            img_urls = self.job_processor.baidu_image_search(keyword)
-        elif input_type == 'image':
-            img_urls = self.job_processor.baidu_image_search_by_image(image_file)
-        else:
-            logger.error(f"{input_type} type error!")
+        if self.web == 'baidu':
+            img_urls = self.job_processor.baidu_image_search(keyword, int(num_images / 30 + 1))
+        elif self.web == 'bing':
+            img_urls = self.job_processor.bing_image_search(keyword, int(num_images / 35 + 1))
+        elif self.web == 'sogou':
+            img_urls = self.job_processor.sogou_image_search(keyword, int(num_images / 48 + 1))
+        elif self.web == '360':
+            img_urls = self.job_processor.so_image_search(keyword, int(num_images / 30 + 1))
+
+        # elif input_type == 'image':
+        #     img_urls = self.job_processor.baidu_image_search_by_image(image_file)
+        # else:
+        #     logger.error(f"{input_type} type error!")
 
         if img_urls:
             self.job_processor.download_images(img_urls[:num_images], keyword, download_folder)
 
     def stop_download(self):
         self.job_processor.terminate_download()
+
+    def select_web(self):
+        self.web = self.web_select_box.currentText()
+        print(self.web)
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, '二次确认', '确定要退出吗？', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
