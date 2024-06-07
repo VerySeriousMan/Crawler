@@ -58,15 +58,15 @@ Crawler 是一个用于抓取百度图片的工具。该工具提供了一个简
    ```bash
    pip install -r requirements.txt
 
-## 使用方法
+## 示例图
 
-1. 进入项目目录，运行主程序：
+### 软件界面示例
 
-   ```bash
-   python main.py
-   
-2. 在打开的图形用户界面中，输入关键词，指定下载数量和保存位置，然后点击提交按钮开始下载。
+![软件界面](images/software_example.png)
 
+### 爬取图片示例
+
+![爬取图片](images/images_example.png)
 
 ## 贡献
 如果你有好的建议或发现了问题，欢迎提交 issue 或 pull request。

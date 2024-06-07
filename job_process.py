@@ -64,7 +64,7 @@ class JobProcessor:
                 logger.error(f"Image search failed with proxy {proxy}: {e}")
                 continue
 
-            return all_urls
+        return all_urls
 
     def sogou_image_search(self, keyword, n):
         headers = {

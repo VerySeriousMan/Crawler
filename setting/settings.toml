@@ -1,5 +1,5 @@
-keyword = "cat"
-download_folder = "cat"
+keyword = "panda"
+download_folder = "panda_dir"
 num_images = 100
 input_type = "text"
 image_file = "/home/zyt/桌面/bq.jpg"
