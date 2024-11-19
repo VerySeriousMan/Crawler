@@ -4,9 +4,8 @@
 Project Name: Crawler
 File Created: 2024.05.27
 Author: ZhangYuetao
-GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: logger.py
-last renew 2024.05.28
+Update: 2024.05.28
 """
 
 import logging

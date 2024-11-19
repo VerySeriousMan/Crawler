@@ -4,9 +4,8 @@
 Project Name: Crawler
 File Created: 2024.05.29
 Author: ZhangYuetao
-GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: get_proxy.py
-last renew 2024.05.30
+Update: 2024.05.30
 """
 
 import os

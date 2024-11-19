@@ -4,9 +4,8 @@
 Project Name: Crawler
 File Created: 2024.05.28
 Author: ZhangYuetao
-GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: job_process.py
-last renew 2024.06.05
+Update: 2024.06.05
 """
 
 import os
@@ -237,7 +236,7 @@ class JobProcessor:
     #
     #     return all_urls
 
-    def download_images(self, img_urls, keyword, download_path):
+    def download_images(self, img_urls, keyword, web_name, download_path):
         if not os.path.exists(download_path):
             os.makedirs(download_path)
 
@@ -261,12 +260,12 @@ class JobProcessor:
                         img_data = requests.get(img_url, headers=headers, proxies={"http": proxy}, timeout=10).content
                         logger.info(f"Downloaded image data size: {len(img_data)}")
                         if len(img_data) > 1024:
-                            with open(os.path.join(download_path, f"{keyword}_{idx + 1}.jpg"), 'wb') as img_file:
+                            with open(os.path.join(download_path, f"{keyword}_{web_name}_{idx + 1}.jpg"), 'wb') as img_file:
                                 img_file.write(img_data)
-                            logger.info(f"Downloaded {keyword}_{idx + 1}.jpg")
+                            logger.info(f"Downloaded {keyword}_{web_name}_{idx + 1}.jpg")
 
                         else:
-                            logger.warning(f"{keyword}_{idx + 1}.jpg size does not match, do not download")
+                            logger.warning(f"{keyword}_{web_name}_{idx + 1}.jpg size does not match, do not download")
 
                         QApplication.processEvents()  # 防止界面冻结
 
@@ -283,7 +282,7 @@ class JobProcessor:
         if not self.terminate:  # 如果未被终止，则打印下载完成信息
             logger.info(f"Downloaded image finished")
 
-    def download_image_thread(self, img_url, keyword, idx, download_path, proxy):
+    def download_image_thread(self, img_url, keyword, web_name, idx, download_path, proxy):
         try:
             headers = {
                 "User-Agent": self.pic_utils_instance.get_random_user_agent(),
@@ -292,11 +291,11 @@ class JobProcessor:
             img_data = requests.get(img_url, headers=headers, proxies={"http": proxy}, timeout=10).content
             logger.info(f"Downloaded image data size: {len(img_data)}")
             if len(img_data) > 1024:
-                with open(os.path.join(download_path, f"{keyword}_{idx + 1}.jpg"), 'wb') as img_file:
+                with open(os.path.join(download_path, f"{keyword}_{web_name}_{idx + 1}.jpg"), 'wb') as img_file:
                     img_file.write(img_data)
-                logger.info(f"Downloaded {keyword}_{idx + 1}.jpg")
+                logger.info(f"Downloaded {keyword}_{web_name}_{idx + 1}.jpg")
             else:
-                logger.warning(f"{keyword}_{idx + 1}.jpg size does not match, do not download")
+                logger.warning(f"{keyword}_{web_name}_{idx + 1}.jpg size does not match, do not download")
 
             QApplication.processEvents()  # 防止界面冻结
 
@@ -308,7 +307,7 @@ class JobProcessor:
         except Exception as e:
             logger.error(f"Failed to download {img_url} with proxy {proxy}: {e}")
 
-    def threads_download_images(self, img_urls, keyword, download_path):
+    def threads_download_images(self, img_urls, keyword, web_name, download_path):
         if not os.path.exists(download_path):
             os.makedirs(download_path)
 
@@ -330,7 +329,7 @@ class JobProcessor:
                     proxy = random.choice(proxies)
 
                     # 提交任务给线程池
-                    executor.submit(self.download_image_thread, img_url, keyword, chunk_id * chunk_size + idx, download_path, proxy)
+                    executor.submit(self.download_image_thread, img_url, keyword, web_name, chunk_id * chunk_size + idx, download_path, proxy)
 
         if not self.terminate:  # 如果未被终止，则打印下载完成信息
             logger.info(f"Downloaded image finished")

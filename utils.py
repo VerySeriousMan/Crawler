@@ -4,9 +4,8 @@
 Project Name: Crawler
 File Created: 2024.05.24
 Author: ZhangYuetao
-GitHub: https://github.com/VerySeriousMan/Crawler
 File Name: utils.py
-last renew 2024.06.04
+Update: 2024.06.04
 """
 
 import os
